@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#e40693',
     padding: 12,
     borderRadius: 10,
     justifyContent: 'center',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
   },
   categoriaChipSelecionada: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#e40693',
   },
   categoriaTexto: {
     fontSize: 12,

@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
   categoriaBadge: {
     fontSize: 11,
-    color: '#007AFF',
+    color: '#e40693',
     marginTop: 4,
     fontWeight: '600',
   },

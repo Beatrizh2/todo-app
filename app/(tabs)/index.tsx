@@ -7,30 +7,29 @@ import {
   Alert,
   SafeAreaView,
   TouchableOpacity,
+  Platform,
+  StatusBar,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Tarefa, CategoriaTarefa } from '../../types/tarefa';
 import { TarefaItem } from '../../components/tarefa-item';
 import { InputAdicionar } from '../../components/input-adicionar';
 
-// Chave para salvar e buscar os dados no armazenamento local do dispositivo
 const STORAGE_KEY = '@todo_app:tarefas';
 
 export default function HomeScreen() {
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [filtro, setFiltro] = useState<'Todas' | 'Pendentes' | 'Concluídas'>('Todas');
 
-  // Carrega as tarefas salvas no AsyncStorage assim que o app é aberto
   useEffect(() => {
     carregarTarefas();
   }, []);
 
-  // Salva automaticamente no AsyncStorage sempre que a lista de tarefas mudar
   useEffect(() => {
     salvarTarefas(tarefas);
   }, [tarefas]);
 
-  // Função para ler dados do AsyncStorage
   const carregarTarefas = async () => {
     try {
       const dadosSalvos = await AsyncStorage.getItem(STORAGE_KEY);
@@ -39,11 +38,10 @@ export default function HomeScreen() {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('Erro', 'Não foi possível carregar as tarefas salvas.');
+      Alert.alert('Erro', 'Não foi possível carregar as missões salvas.');
     }
   };
 
-  // Função para gravar dados no AsyncStorage
   const salvarTarefas = async (novasTarefas: Tarefa[]) => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novasTarefas));
@@ -53,7 +51,6 @@ export default function HomeScreen() {
     }
   };
 
-  // Adiciona nova tarefa no início da lista
   const handleAdicionarTarefa = (texto: string, categoria: CategoriaTarefa) => {
     const novaTarefa: Tarefa = {
       id: Date.now().toString(),
@@ -65,7 +62,6 @@ export default function HomeScreen() {
     setTarefas((prev) => [novaTarefa, ...prev]);
   };
 
-  // Alterna o status entre concluída e pendente
   const handleAlternarConcluida = (id: string) => {
     setTarefas((prev) =>
       prev.map((item) =>
@@ -74,11 +70,10 @@ export default function HomeScreen() {
     );
   };
 
-  // Exibe o popup de confirmação (Alert) antes de excluir a tarefa
   const handleConfirmarExclusao = (id: string) => {
     Alert.alert(
-      'Excluir Tarefa',
-      'Tem certeza de que deseja remover esta tarefa?',
+      'DELETAR TAREFFINHA ',
+      'Tem certeza de que deseja abandonar esta TAREFA SEU PREGUIÇOSO?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -92,33 +87,36 @@ export default function HomeScreen() {
     );
   };
 
-  // Filtra as tarefas conforme a aba selecionada (Todas / Pendentes / Concluídas)
   const tarefasFiltradas = tarefas.filter((t) => {
     if (filtro === 'Pendentes') return !t.concluida;
     if (filtro === 'Concluídas') return t.concluida;
     return true;
   });
 
-  // Calcula a quantidade de tarefas não concluídas
   const pendentesCount = tarefas.filter((t) => !t.concluida).length;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" backgroundColor="#0D0E15" />
       <View style={styles.content}>
-        {/* Cabeçalho e Contador de Pendentes */}
+        {/* Cabeçalho com a Logo em Imagem */}
         <View style={styles.header}>
-          <Text style={styles.titulo}>📝 Minhas Tarefas</Text>
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
           <View style={styles.badgeContador}>
             <Text style={styles.badgeTexto}>
-              {pendentesCount} {pendentesCount === 1 ? 'pendente' : 'pendentes'}
+              {pendentesCount} {pendentesCount === 1 ? 'TAREFA' : 'TAREFAS'}
             </Text>
           </View>
         </View>
 
-        {/* Input para adicionar tarefas com categoria */}
+        {/* Input */}
         <InputAdicionar onAdicionarTarefa={handleAdicionarTarefa} />
 
-        {/* Botões de Filtro */}
+        {/* Filtros */}
         <View style={styles.filtrosRow}>
           {(['Todas', 'Pendentes', 'Concluídas'] as const).map((item) => (
             <TouchableOpacity
@@ -135,13 +133,13 @@ export default function HomeScreen() {
                   filtro === item && styles.filtroTextoAtivo,
                 ]}
               >
-                {item}
+                {item.toUpperCase()}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* Lista de Tarefas */}
+        {/* Lista */}
         <FlatList
           data={tarefasFiltradas}
           keyExtractor={(item) => item.id}
@@ -154,7 +152,7 @@ export default function HomeScreen() {
           )}
           ListEmptyComponent={() => (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyTexto}>Nenhuma tarefa encontrada 🎯</Text>
+              <Text style={styles.emptyTexto}>SEM TAREFAS NO MOMENTO</Text>
             </View>
           )}
           contentContainerStyle={styles.listContent}
@@ -165,68 +163,75 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#f3f4f7',
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 16 : 32,
   },
   content: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
-    marginTop: 10,
+    marginBottom: 20,
   },
-  titulo: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
+  logoImage: {
+    width: 100,
+    height: 90,
   },
   badgeContador: {
-    backgroundColor: '#E3F2FD',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  badgeTexto: {
-    fontSize: 12,
-    color: '#007AFF',
-    fontWeight: 'bold',
-  },
-  filtrosRow: {
-    flexDirection: 'row',
-    marginBottom: 12,
-    gap: 8,
-  },
-  filtroButton: {
+    backgroundColor: '#161626',
+    borderWidth: 1,
+    borderColor: '#ff00bbea',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: '#E0E0E0',
+  },
+  badgeTexto: {
+    fontSize: 11,
+    color: '#fafffc',
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  filtrosRow: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    gap: 8,
+  },
+  filtroButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: '#161626',
+    borderWidth: 1,
+    borderColor: '#262638',
   },
   filtroButtonAtivo: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#e40693',
+    borderColor: '#000000',
   },
   filtroTexto: {
-    fontSize: 13,
-    color: '#616161',
-  },
-  filtroTextoAtivo: {
-    color: '#FFFFFF',
+    fontSize: 11,
+    color: '#fcfcff',
     fontWeight: 'bold',
   },
+  filtroTextoAtivo: {
+    color: '#ffffff',
+  },
   listContent: {
-    paddingBottom: 20,
+    paddingBottom: 24,
   },
   emptyContainer: {
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 60,
   },
   emptyTexto: {
-    fontSize: 15,
-    color: '#9E9E9E',
+    fontSize: 13,
+    color: '#55556A',
+    fontWeight: 'bold',
+    letterSpacing: 1,
   },
 });

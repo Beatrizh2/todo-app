@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   cardTitulo: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#007AFF',
+    color: '#e40693',
     marginBottom: 10,
   },
   cardTexto: {
