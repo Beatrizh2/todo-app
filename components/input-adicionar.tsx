@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { CategoriaTarefa } from '../types/tarefa';
 
 // Lista de categorias disponíveis para seleção
-const CATEGORIAS: CategoriaTarefa[] = ['Geral', 'Trabalho', 'Estudos', 'Pessoal'];
+const CATEGORIAS: CategoriaTarefa[] = ['Geral', 'Trabalho', 'Estudos', 'Pessoal', 'Saúde', 'Lazer', 'Compras', 'Financeiro', 'Família', 'Amigos', 'Viagem', 'Casa', 'Esporte', 'Cultura', 'Tecnologia', 'Animais', 'Voluntariado', 'Eventos', 'Outros'];
 
 type Props = {
   // Função executada ao enviar uma nova tarefa válida
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   },
   categoriasRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap', //vai fazer nossos categoriaszinhas desceram para linhazinha de baixo viu qrido
     marginTop: 10,
     gap: 6,
   },
