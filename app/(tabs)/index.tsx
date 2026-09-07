@@ -38,6 +38,7 @@ export default function HomeScreen() {
         setTarefas(JSON.parse(dadosSalvos));
       }
     } catch (error) {
+      console.error(error);
       Alert.alert('Erro', 'Não foi possível carregar as tarefas salvas.');
     }
   };
@@ -47,6 +48,7 @@ export default function HomeScreen() {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novasTarefas));
     } catch (error) {
+      console.error(error);
       Alert.alert('Erro', 'Não foi possível salvar as alterações.');
     }
   };
