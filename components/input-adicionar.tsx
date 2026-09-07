@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   categoriasRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap', //vai fazer nossos categoriaszinhas desceram para linhazinha de baixo viu qrido
+    flexWrap: 'wrap', //vai fazer nossos categoriaszinhas desceram para linhazinha de baixo viu qridoso
     marginTop: 10,
     gap: 6,
   },
