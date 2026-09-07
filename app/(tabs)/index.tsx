@@ -1,98 +1,230 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Alert,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Tarefa, CategoriaTarefa } from '../../types/tarefa';
+import { TarefaItem } from '../../components/tarefa-item';
+import { InputAdicionar } from '../../components/input-adicionar';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+// Chave para salvar e buscar os dados no armazenamento local do dispositivo
+const STORAGE_KEY = '@todo_app:tarefas';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+  const [filtro, setFiltro] = useState<'Todas' | 'Pendentes' | 'Concluídas'>('Todas');
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  // Carrega as tarefas salvas no AsyncStorage assim que o app é aberto
+  useEffect(() => {
+    carregarTarefas();
+  }, []);
+
+  // Salva automaticamente no AsyncStorage sempre que a lista de tarefas mudar
+  useEffect(() => {
+    salvarTarefas(tarefas);
+  }, [tarefas]);
+
+  // Função para ler dados do AsyncStorage
+  const carregarTarefas = async () => {
+    try {
+      const dadosSalvos = await AsyncStorage.getItem(STORAGE_KEY);
+      if (dadosSalvos !== null) {
+        setTarefas(JSON.parse(dadosSalvos));
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível carregar as tarefas salvas.');
+    }
+  };
+
+  // Função para gravar dados no AsyncStorage
+  const salvarTarefas = async (novasTarefas: Tarefa[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(novasTarefas));
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível salvar as alterações.');
+    }
+  };
+
+  // Adiciona nova tarefa no início da lista
+  const handleAdicionarTarefa = (texto: string, categoria: CategoriaTarefa) => {
+    const novaTarefa: Tarefa = {
+      id: Date.now().toString(),
+      texto,
+      concluida: false,
+      criadaEm: new Date().toISOString().split('T')[0],
+      categoria,
+    };
+    setTarefas((prev) => [novaTarefa, ...prev]);
+  };
+
+  // Alterna o status entre concluída e pendente
+  const handleAlternarConcluida = (id: string) => {
+    setTarefas((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, concluida: !item.concluida } : item
+      )
+    );
+  };
+
+  // Exibe o popup de confirmação (Alert) antes de excluir a tarefa
+  const handleConfirmarExclusao = (id: string) => {
+    Alert.alert(
+      'Excluir Tarefa',
+      'Tem certeza de que deseja remover esta tarefa?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: () => {
+            setTarefas((prev) => prev.filter((item) => item.id !== id));
+          },
+        },
+      ]
+    );
+  };
+
+  // Filtra as tarefas conforme a aba selecionada (Todas / Pendentes / Concluídas)
+  const tarefasFiltradas = tarefas.filter((t) => {
+    if (filtro === 'Pendentes') return !t.concluida;
+    if (filtro === 'Concluídas') return t.concluida;
+    return true;
+  });
+
+  // Calcula a quantidade de tarefas não concluídas
+  const pendentesCount = tarefas.filter((t) => !t.concluida).length;
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {/* Cabeçalho e Contador de Pendentes */}
+        <View style={styles.header}>
+          <Text style={styles.titulo}>📝 Minhas Tarefas</Text>
+          <View style={styles.badgeContador}>
+            <Text style={styles.badgeTexto}>
+              {pendentesCount} {pendentesCount === 1 ? 'pendente' : 'pendentes'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Input para adicionar tarefas com categoria */}
+        <InputAdicionar onAdicionarTarefa={handleAdicionarTarefa} />
+
+        {/* Botões de Filtro */}
+        <View style={styles.filtrosRow}>
+          {(['Todas', 'Pendentes', 'Concluídas'] as const).map((item) => (
+            <TouchableOpacity
+              key={item}
+              style={[
+                styles.filtroButton,
+                filtro === item && styles.filtroButtonAtivo,
+              ]}
+              onPress={() => setFiltro(item)}
+            >
+              <Text
+                style={[
+                  styles.filtroTexto,
+                  filtro === item && styles.filtroTextoAtivo,
+                ]}
+              >
+                {item}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Lista de Tarefas */}
+        <FlatList
+          data={tarefasFiltradas}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <TarefaItem
+              tarefa={item}
+              onAlternarConcluida={handleAlternarConcluida}
+              onExcluir={handleConfirmarExclusao}
+            />
+          )}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyTexto}>Nenhuma tarefa encontrada 🎯</Text>
+            </View>
+          )}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F7FA',
+  },
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 16,
+    marginTop: 10,
+  },
+  titulo: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  badgeContador: {
+    backgroundColor: '#E3F2FD',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  badgeTexto: {
+    fontSize: 12,
+    color: '#007AFF',
+    fontWeight: 'bold',
+  },
+  filtrosRow: {
+    flexDirection: 'row',
+    marginBottom: 12,
     gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  filtroButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#E0E0E0',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  filtroButtonAtivo: {
+    backgroundColor: '#007AFF',
+  },
+  filtroTexto: {
+    fontSize: 13,
+    color: '#616161',
+  },
+  filtroTextoAtivo: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  emptyTexto: {
+    fontSize: 15,
+    color: '#9E9E9E',
   },
 });
