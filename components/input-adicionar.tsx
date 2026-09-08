@@ -10,7 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { CategoriaTarefa } from '../types/tarefa';
 
-const CATEGORIAS: CategoriaTarefa[] = ['Geral', 'Trabalho', 'Estudos', 'Pessoal', 'Saúde'];
+const CATEGORIAS: CategoriaTarefa[] = ['Geral', 'Trabalho', 'Estudos', 'Pessoal', 'Saúde', 'Lazer', 'Compras', 'Financeiro', 'Família', 'Amigos', 'Viagem', 'Casa', 'Esporte', 'Cultura', 'Tecnologia', 'Animais', 'Voluntariado', 'Eventos', 'Outros'];
 
 type Props = {
   onAdicionarTarefa: (texto: string, categoria: CategoriaTarefa) => void;
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    color: '#1A1A1A',
+    color: '#141414',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   button: {
-    backgroundColor: '#ff00bbea',
+    backgroundColor: '#e40693',
     padding: 12,
     borderRadius: 8,
     justifyContent: 'center',
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   categoriaAtivaTexto: {
     fontWeight: 'bold',
-    color: '#ff00bbea',
+    color: '#e40693',
   },
   categoriasRow: {
     flexDirection: 'row',
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9',
   },
   categoriaChipSelecionada: {
-    backgroundColor: '#ff00bbea',
+    backgroundColor: '#e40693',
   },
   categoriaTexto: {
     fontSize: 12,

@@ -139,24 +139,28 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* Lista */}
-        <FlatList
-          data={tarefasFiltradas}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TarefaItem
-              tarefa={item}
-              onAlternarConcluida={handleAlternarConcluida}
-              onExcluir={handleConfirmarExclusao}
-            />
-          )}
-          ListEmptyComponent={() => (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyTexto}>SEM TAREFAS NO MOMENTO</Text>
-            </View>
-          )}
-          contentContainerStyle={styles.listContent}
-        />
+        {/* Lista encapsulada na Caixa (Card) */}
+        <View style={styles.listaContainer}>
+          <FlatList
+            data={tarefasFiltradas}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TarefaItem
+                tarefa={item}
+                onAlternarConcluida={handleAlternarConcluida}
+                onExcluir={handleConfirmarExclusao}
+              />
+            )}
+            ListEmptyComponent={() => (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyTexto}>SEM TAREFAS NO MOMENTO</Text>
+              </View>
+            )}
+            style={styles.flatListStyle}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={true}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
     height: 90,
   },
   badgeContador: {
-    backgroundColor: '#161626',
+    backgroundColor: '#0b0b0d',
     borderWidth: 1,
     borderColor: '#ff00bbea',
     paddingHorizontal: 12,
@@ -192,7 +196,7 @@ const styles = StyleSheet.create({
   },
   badgeTexto: {
     fontSize: 11,
-    color: '#fafffc',
+    color: '#f2f3f2',
     fontWeight: 'bold',
     letterSpacing: 1,
   },
@@ -211,7 +215,7 @@ const styles = StyleSheet.create({
   },
   filtroButtonAtivo: {
     backgroundColor: '#e40693',
-    borderColor: '#000000',
+    borderColor: '#0b0a0a',
   },
   filtroTexto: {
     fontSize: 11,
@@ -221,12 +225,23 @@ const styles = StyleSheet.create({
   filtroTextoAtivo: {
     color: '#ffffff',
   },
+  listaContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    maxHeight: 380, // Limite de altura antes de liberar a rolagem
+  },
+  flatListStyle: {
+    flexGrow: 0, // Permite que a caixa se ajuste ao tamanho exato dos itens presentes
+  },
   listContent: {
-    paddingBottom: 24,
+    paddingBottom: 8,
   },
   emptyContainer: {
     alignItems: 'center',
-    marginTop: 60,
+    paddingVertical: 30,
   },
   emptyTexto: {
     fontSize: 13,

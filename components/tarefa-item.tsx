@@ -46,7 +46,7 @@ export function TarefaItem({ tarefa, onAlternarConcluida, onExcluir }: Props) {
         style={styles.excluirButton}
         onPress={() => onExcluir(tarefa.id)}
       >
-        <Ionicons name="trash-outline" size={20} color="#FF5252" />
+        <Ionicons name="trash-outline" size={20} color="#e40693" />
       </TouchableOpacity>
     </View>
   );
@@ -89,11 +89,11 @@ const styles = StyleSheet.create({
   },
   texto: {
     fontSize: 16,
-    color: '#FFFFFF',
+    color: '#0d0c0c',
   },
   textoConcluido: {
     textDecorationLine: 'line-through',
-    color: '#8E8E93',
+    color: '#0c0c0e',
   },
   tagsContainer: {
     flexDirection: 'row',
