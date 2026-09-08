@@ -1,95 +1,120 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Ícones nativos do Expo (checkbox e lixeira)
-import { Tarefa } from '../types/tarefa'; // Interface/tipo do modelo de dados
+import { Ionicons } from '@expo/vector-icons';
+import { Tarefa } from '../types/tarefa';
 
-// Define as propriedades (props) que o componente vai receber do componente pai
 type Props = {
-  tarefa: Tarefa; // Objeto com os dados da tarefa (id, texto, concluida, etc)
-  onAlternarConcluida: (id: string) => void; // Função para marcar/desmarcar status
-  onExcluir: (id: string) => void; // Função para remover a tarefa
+  tarefa: Tarefa;
+  onAlternarConcluida: (id: string) => void;
+  onExcluir: (id: string) => void;
 };
 
 export function TarefaItem({ tarefa, onAlternarConcluida, onExcluir }: Props) {
   return (
-    // Container principal do item (aplica estilo extra se estiver concluído)
     <View style={[styles.container, tarefa.concluida && styles.containerConcluida]}>
-      
-      {/* Botão da Checkbox */}
       <TouchableOpacity
         style={styles.checkButton}
         onPress={() => onAlternarConcluida(tarefa.id)}
       >
-        {/* Muda o ícone e a cor conforme o estado 'concluida' */}
-        <Ionicons
-          name={tarefa.concluida ? "checkbox" : "square-outline"}
-          size={24}
-          color={tarefa.concluida ? "#4CAF50" : "#757575"}
-        />
+        <View style={[
+          styles.checkboxWrapper,
+          tarefa.concluida && styles.checkboxWrapperConcluida
+        ]}>
+          {tarefa.concluida ? (
+            <Ionicons name="checkmark" size={20} color="#FFFFFF" />
+          ) : (
+            <Ionicons name="add" size={20} color="#8E8E93" />
+          )}
+        </View>
       </TouchableOpacity>
 
-      {/* Área central com o texto e a tag de categoria */}
       <View style={styles.textoContainer}>
-        {/* Aplica o estilo riscado e cor opaca quando concluída */}
         <Text style={[styles.texto, tarefa.concluida && styles.textoConcluido]}>
           {tarefa.texto}
         </Text>
-
-        {/* Exibe a badge de categoria apenas se ela existir na tarefa */}
-        {tarefa.categoria && (
-          <Text style={styles.categoriaBadge}>{tarefa.categoria}</Text>
-        )}
+        <View style={styles.tagsContainer}>
+          {tarefa.categoria && (
+            <View style={styles.categoriaBadge}>
+              <Text style={styles.categoriaTexto}>{tarefa.categoria}</Text>
+            </View>
+          )}
+          <Text style={styles.dataTexto}>{tarefa.criadaEm}</Text>
+        </View>
       </View>
 
-      {/* Botão de Excluir */}
       <TouchableOpacity
         style={styles.excluirButton}
         onPress={() => onExcluir(tarefa.id)}
       >
-        <Ionicons name="trash-outline" size={22} color="#FF5252" />
+        <Ionicons name="trash-outline" size={20} color="#FF5252" />
       </TouchableOpacity>
     </View>
   );
 }
 
-// Estilização do componente
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row', // Alinha ícones e textos lado a lado em linha
-    alignItems: 'center', // Centraliza os elementos na altura
-    backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 10,
-    elevation: 2, // Sombra para Android
-    shadowColor: '#000', // Configurações de sombra para iOS
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   containerConcluida: {
-    backgroundColor: '#F5F5F5',
-    opacity: 0.8,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    opacity: 0.7,
   },
   checkButton: {
     marginRight: 12,
   },
+  checkboxWrapper: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: '#8E8E93',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  checkboxWrapperConcluida: {
+    backgroundColor: '#4CAF50',
+    borderColor: '#4CAF50',
+  },
   textoContainer: {
-    flex: 1, // Ocupa todo o espaço restante entre o checkbox e o botão excluir
+    flex: 1,
   },
   texto: {
     fontSize: 16,
-    color: '#212121',
+    color: '#FFFFFF',
   },
   textoConcluido: {
-    textDecorationLine: 'line-through', // Linha cortando o texto (riscado)
-    color: '#9E9E9E',
+    textDecorationLine: 'line-through',
+    color: '#8E8E93',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 4,
   },
   categoriaBadge: {
-    fontSize: 11,
+    backgroundColor: 'rgba(228, 6, 147, 0.15)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+  },
+  categoriaTexto: {
+    fontSize: 10,
     color: '#e40693',
-    marginTop: 4,
     fontWeight: '600',
+  },
+  dataTexto: {
+    fontSize: 10,
+    color: '#8E8E93',
   },
   excluirButton: {
     padding: 6,
