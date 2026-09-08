@@ -8,38 +8,41 @@ O TAREFUNCTION é um aplicativo mobile para gerenciamento de lista de tarefas (T
 
 ## Informações Acadêmicas
 
-- Aluna: Beatriz Albuquerque
-- Turma: DSI11
-- Instituição: Grau Técnico
-- Professor: Gabriel Neves
+- **Aluna:** Beatriz Albuquerque
+- **Turma:** DSI11
+- **Instituição:** Grau Técnico
+- **Professor:** Gabriel Neves
 
 ---
 
 ## Recursos e Funcionalidades
 
-- Gerenciamento de Tarefas: Adicione, conclua e remova tarefas facilmente.
-- Categorização: Organize suas tarefas por categorias (Geral, Trabalho, Estudos, Pessoal).
-- Filtros Dinâmicos: Visualize todas as tarefas, apenas as pendentes ou as concluídas.
-- Persistência Local: Todas as tarefas ficam salvas no dispositivo usando @react-native-async-storage/async-storage.
-- Interface Personalizada: Design exclusivo alinhado à identidade visual da marca TAREFUNCTION.
+- **Gerenciamento de Tarefas:** Adicione, conclua e exclua tarefas com modal de confirmação.
+- **Categorização Dinâmica:** Seletor retrátil com suporte às categorias (Geral, Trabalho, Estudos, Pessoal, Saúde).
+- **Filtros por Estado:** Alterne rapidamente a visualização entre TODAS, PENDENTES e CONCLUÍDAS.
+- **Card Adaptável de Tarefas:** Layout container em caixa que cresce conforme os itens são criados e ativa scroll interno ao atingir o limite.
+- **Navegação por Abas:** Interface dividida entre a aba principal de Tarefas e a aba Sobre o Projeto.
+- **Persistência Local:** Dados armazenados de forma contínua no dispositivo via `@react-native-async-storage/async-storage`.
+- **Compatibilidade Web:** Preparado para deploy e testes em navegadores via Vercel.
 
 ---
 
 ## Tecnologias Utilizadas
 
-- React Native - Framework mobile
-- Expo - Ecossistema para desenvolvimento e build
-- TypeScript - Tipagem estática
-- AsyncStorage - Armazenamento de dados local
-- Expo Vector Icons - Ícones vetoriais (Ionicons)
+- **React Native** - Framework para aplicações mobile
+- **Expo & Expo Router** - Ecossistema para build e roteamento por abas
+- **TypeScript** - Tipagem estática
+- **AsyncStorage** - Armazenamento de dados local
+- **Expo Vector Icons** - Conjunto de ícones vetoriais (Ionicons)
+- **React Native Web** - Renderização para navegadores web
 
 ---
 
 ## Como Executar o Projeto
 
 ### Pré-requisitos
-- Node.js instalado
-- App Expo Go instalado no smartphone (Android/iOS) ou um emulador configurado
+- Node.js instalado no computador
+- App **Expo Go** instalado no smartphone (Android/iOS) ou um navegador web
 
 ### Passo a passo
 
